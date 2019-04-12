@@ -1,121 +1,156 @@
-/* eslint-disable no-underscore-dangle */
+"use strict";
 
-import session from 'express-session';
-// const User = require("./user");
-import { usersAccount } from './database';
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports["default"] = void 0;
 
+var _expressSession = _interopRequireDefault(require("express-session"));
+
+var _database = require("./database");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 // let accountCounter = 1;
-class Account {
-  constructor(firstName, lastName, email, type, openingBalance = 0) {
+var Account =
+/*#__PURE__*/
+function () {
+  function Account(firstName, lastName, email, type) {
+    var openingBalance = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+
+    _classCallCheck(this, Account);
+
     this._firstName = firstName;
     this._lastName = lastName;
     this._email = email;
     this._type = type;
     this._openingBalance = openingBalance;
-    this._balance = this._openingBalance;
-    // this._id = accountCounter;
-    this._status = 'dormant';
+    this._balance = this._openingBalance; // this._id = accountCounter;
 
+    this._status = 'dormant';
     this._accountNumber = Math.floor((1 + Math.random()) * 1000000);
   }
 
-  getFirstName() {
-    return this._firstName;
-  }
+  _createClass(Account, [{
+    key: "getFirstName",
+    value: function getFirstName() {
+      return this._firstName;
+    }
+  }, {
+    key: "setFirstName",
+    value: function setFirstName(firstName) {
+      this._firstName = firstName;
+    }
+  }, {
+    key: "getLastName",
+    value: function getLastName() {
+      return this._lastName;
+    }
+  }, {
+    key: "setLastName",
+    value: function setLastName(lastName) {
+      this._lastName = lastName;
+    }
+  }, {
+    key: "getEmail",
+    value: function getEmail() {
+      return this._email;
+    }
+  }, {
+    key: "setEmail",
+    value: function setEmail(email) {
+      this._email = email;
+    }
+  }, {
+    key: "getType",
+    value: function getType() {
+      return this._type;
+    }
+  }, {
+    key: "setType",
+    value: function setType() {
+      this._type = true;
+    }
+  }, {
+    key: "getAccountNumber",
+    value: function getAccountNumber() {
+      return this._accountNumber;
+    }
+  }, {
+    key: "getBalance",
+    value: function getBalance() {
+      // eslint-disable-next-line no-return-assign
+      return this._balance = this._openingBalance;
+    }
+  }, {
+    key: "getStatus",
+    value: function getStatus() {
+      return this._status;
+    }
+  }, {
+    key: "setStatus",
+    value: function setStatus() {
+      var balance = this.getBalance();
+      if (balance <= 0) this._status = 'dormant';
+      this._status = 'active';
+    }
+  }, {
+    key: "save",
+    value: function save() {
+      var first = this.getFirstName();
+      var last = this.getLastName();
+      var email = this.getEmail();
+      var Balance = this.getBalance();
+      var type = this.getType();
+      var accNumber = this.getAccountNumber();
+      var status = this.getStatus();
+      var user = {
+        id: _database.usersAccount.length + 1,
+        first: first,
+        last: last,
+        email: email,
+        Balance: Balance,
+        type: type,
+        accNumber: accNumber,
+        status: status
+      }; // return  accDb.push(user1);
+      // if (!session.account) {
+      // session.account = [];
+      // }
 
-  setFirstName(firstName) {
-    this._firstName = firstName;
-  }
+      var lastInsert;
 
-  getLastName() {
-    return this._lastName;
-  }
+      if (_database.usersAccount.push(user)) {
+        lastInsert = {
+          // eslint-disable-next-line no-underscore-dangle
+          id: _database.usersAccount.length,
+          email: email,
+          first: first,
+          last: last,
+          userId: _expressSession["default"].userId || _expressSession["default"].staffId || _expressSession["default"].cashierId,
+          accNumber: accNumber,
+          Balance: Balance,
+          status: status,
+          type: type
+        };
+        return lastInsert;
+      }
 
-  setLastName(lastName) {
-    this._lastName = lastName;
-  }
-
-  getEmail() {
-    return this._email;
-  }
-
-  setEmail(email) {
-    this._email = email;
-  }
-
-  getType() {
-    return this._type;
-  }
-
-  setType() {
-    this._type = true;
-  }
-
-  getAccountNumber() {
-    return this._accountNumber;
-  }
-
-  getBalance() {
-    // eslint-disable-next-line no-return-assign
-    return (this._balance = this._openingBalance);
-  }
-
-  getStatus() {
-    return this._status;
-  }
-
-  setStatus() {
-    const balance = this.getBalance();
-    if (balance <= 0) this._status = 'dormant';
-
-    this._status = 'active';
-  }
-
-  save() {
-    const first = this.getFirstName();
-    const last = this.getLastName();
-    const email = this.getEmail();
-    const Balance = this.getBalance();
-    const type = this.getType();
-    const accNumber = this.getAccountNumber();
-    const status = this.getStatus();
-
-    const user = {
-      id: usersAccount.length + 1,
-      first,
-      last,
-      email,
-      Balance,
-      type,
-      accNumber,
-      status,
-    };
-    // return  accDb.push(user1);
-    // if (!session.account) {
-    // session.account = [];
-    // }
-    let lastInsert;
-    if (usersAccount.push(user)) {
-      lastInsert = {
-        // eslint-disable-next-line no-underscore-dangle
-        id: usersAccount.length,
-        email,
-        first,
-        last,
-        userId: session.userId || session.staffId || session.cashierId,
-        accNumber,
-        Balance,
-        status,
-        type,
-      };
+      lastInsert = false;
       return lastInsert;
     }
-    lastInsert = false;
-    return lastInsert;
-  }
-}
+  }]);
 
-//
+  return Account;
+}(); //
 // module.exports = Account;
-export default Account;
+
+
+var _default = Account;
+exports["default"] = _default;
